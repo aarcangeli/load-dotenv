@@ -34,15 +34,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const dotenv = __importStar(__nccwpck_require__(437));
 const fs = __importStar(__nccwpck_require__(747));
+const path_1 = __importDefault(__nccwpck_require__(622));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const path = core.getInput('path');
+        const ifNoFilesFound = core.getInput('if-file-not-found');
+        const inputPath = core.getInput('path');
         const quiet = core.getBooleanInput('quiet');
-        const env = dotenv.parse(fs.readFileSync(`${path}/.env`));
+        const fullPath = path_1.default.resolve(inputPath, '.env');
+        if (!fs.existsSync(fullPath)) {
+            switch (ifNoFilesFound) {
+                case 'warn': {
+                    core.warning(`No files were found with the provided path: ${inputPath}. No artifacts will be uploaded.`);
+                    break;
+                }
+                case 'error': {
+                    core.setFailed(`No files were found with the provided path: ${inputPath}. No artifacts will be uploaded.`);
+                    break;
+                }
+                case 'ignore': {
+                    core.info(`No files were found with the provided path: ${inputPath}. No artifacts will be uploaded.`);
+                    break;
+                }
+            }
+            return;
+        }
+        const env = dotenv.parse(fs.readFileSync(fullPath));
         for (const entry of Object.entries(env)) {
             if (!quiet) {
                 core.info(`${entry[0]} = ${entry[1]}`);

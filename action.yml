@@ -12,6 +12,15 @@ inputs:
     required: false
     description: If true, don't print variables
     default: 'false'
+  if-file-not-found:
+    required: false
+    description: >
+      The desired behavior if the .env is not found using the provided path.
+      Available Options:
+        warn: Output a warning but do not fail the action
+        error: Fail the action with an error message
+        ignore: Do not output any warnings or errors, the action does not fail
+    default: 'error'
 runs:
   using: 'node16'
   main: 'dist/index.js'
