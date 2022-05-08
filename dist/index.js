@@ -50,20 +50,20 @@ function run() {
         const filenames = core.getInput('filenames');
         const fullDirectory = path_1.default.resolve(inputPath);
         let mergedObject = {};
-        for (const name of filenames.split('\n')) {
-            const fullPath = path_1.default.join(fullDirectory, filenames);
+        for (const name of filenames.split('\n').map(value => value.trim())) {
+            const fullPath = path_1.default.join(fullDirectory, name);
             if (!fs.existsSync(fullPath)) {
                 switch (ifNoFilesFound) {
                     case 'warn': {
-                        core.warning(`.env file not found in '${fullDirectory}'`);
+                        core.warning(`${name} file not found in '${fullDirectory}'`);
                         break;
                     }
                     case 'error': {
-                        core.setFailed(`.env file not found in '${fullDirectory}'`);
+                        core.setFailed(`${name} file not found in '${fullDirectory}'`);
                         break;
                     }
                     case 'ignore': {
-                        core.info(`.env file not found in '${fullDirectory}'`);
+                        core.info(`${name} file not found in '${fullDirectory}'`);
                         break;
                     }
                 }
