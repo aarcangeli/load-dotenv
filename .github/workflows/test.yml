@@ -13,7 +13,7 @@ jobs:
           npm install
       - run: |
           npm run all
-  test:
+  test-simple:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -51,7 +51,7 @@ jobs:
         with:
           path: .github/test-dir
           # without log
-          quiet: false
+          quiet: true
 
   test-multiple-files:
     runs-on: ubuntu-latest

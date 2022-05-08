@@ -12,8 +12,8 @@ async function run(): Promise<void> {
   const fullDirectory = path.resolve(inputPath)
   let mergedObject = {}
 
-  for (const name of filenames.split('\n')) {
-    const fullPath = path.join(fullDirectory, name.trim())
+  for (const name of filenames.split('\n').map(value => value.trim())) {
+    const fullPath = path.join(fullDirectory, name)
 
     if (!fs.existsSync(fullPath)) {
       switch (ifNoFilesFound) {
