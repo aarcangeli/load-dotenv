@@ -15,7 +15,7 @@ This action allows reding environment variables from a `.env` file.
     # Default: .
     path: ''
 
-    # If true, don't print variables
+    # If true, don't print variables to log
     # Default: false
     quiet: ''
 
@@ -28,6 +28,19 @@ This action allows reding environment variables from a `.env` file.
     if-file-not-found: ''
 ```
 <!-- end usage -->
+
+## Examples
+
+```yaml
+- uses: aarcangeli/load-dotenv@v3
+  with:
+    path: 'backend/new'
+    filenames:
+      .env
+      .env.test
+    quiet: false
+    if-file-not-found: error
+```
 
 ## Contribution
 

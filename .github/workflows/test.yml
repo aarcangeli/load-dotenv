@@ -28,3 +28,50 @@ jobs:
             echo Expected TEST_EXPORT set
             exit 1
           fi
+          if [[ "$TEST_BASE" != "base" ]]; then
+            echo Expected TEST_EXPORT set
+            exit 1
+          fi
+
+  test-error:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          if-file-not-found: warn
+
+  test-quiet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          # without log
+          quiet: false
+
+  test-multiple-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          filenames:
+            .env
+            .env.test
+
+      - name: Verify Export
+        run: |
+          if [[ "$TEST_EXPORT" != "foo_override" ]]; then
+            echo Expected TEST_EXPORT set
+            exit 1
+          fi
+          if [[ "$TEST_BASE" != "base" ]]; then
+            echo Expected TEST_EXPORT set
+            exit 1
+          fi

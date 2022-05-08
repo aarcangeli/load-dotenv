@@ -8,9 +8,15 @@ inputs:
       The directory to find the '.env' file. 
       Relative paths are resolved inside the workspace directory
     default: '.'
+  filenames:
+    required: false
+    description: >
+      Override the name of the file to load.
+      Multiple files are allowed.
+    default: '.env'
   quiet:
     required: false
-    description: If true, don't print variables
+    description: If true, don't print variables to log
     default: 'false'
   if-file-not-found:
     required: false
