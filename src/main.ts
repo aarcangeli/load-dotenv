@@ -7,14 +7,13 @@ async function run(): Promise<void> {
   const ifNoFilesFound: string = core.getInput('if-file-not-found')
   const inputPath: string = core.getInput('path')
   const quiet: boolean = core.getBooleanInput('quiet')
-  const filenames = core.getInput('filenames');
+  const filenames = core.getInput('filenames')
 
   const fullDirectory = path.resolve(inputPath)
-  let mergedObject = {};
+  let mergedObject = {}
 
   for (const name of filenames.split('\n')) {
     const fullPath = path.join(fullDirectory, filenames)
-
 
     if (!fs.existsSync(fullPath)) {
       switch (ifNoFilesFound) {
@@ -38,7 +37,7 @@ async function run(): Promise<void> {
       core.info(`Loading ${fullPath}`)
     }
 
-    const env = dotenv.parse(fs.readFileSync(fullPath));
+    const env = dotenv.parse(fs.readFileSync(fullPath))
     mergedObject = {...mergedObject, ...env}
   }
 

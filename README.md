@@ -15,6 +15,10 @@ This action allows reding environment variables from a `.env` file.
     # Default: .
     path: ''
 
+    # Override the name of the file to load. Multiple files are allowed.
+    # Default: .env
+    filenames: ''
+
     # If true, don't print variables to log
     # Default: false
     quiet: ''
@@ -49,6 +53,6 @@ This action allows reding environment variables from a `.env` file.
 git clone git@github.com:aarcangeli/load-dotenv.git && cd load-dotenv
 # Install dependencies
 npm install
-# Always before commit
+# Always before a commit
 npm run package
 ```

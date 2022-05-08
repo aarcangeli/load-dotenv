@@ -5,13 +5,14 @@
   "description": "TypeScript template action",
   "main": "lib/main.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && line-endings -l LF -w lib/**",
     "format": "prettier --write src/**/*.ts",
     "format-check": "prettier --check src/**/*.ts",
     "lint": "eslint src/**/*.ts",
-    "package": "ncc build --source-map --license licenses.txt && node lib/misc/generate-docs.js",
-    "all": "npm run build && npm run format && npm run lint && npm run package",
-    "pre-commit": "npm run format && npm run build && npm run package"
+    "package": "ncc build --source-map --license licenses.txt",
+    "generate-docs": "node lib/misc/generate-docs.js",
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm run package",
+    "pre-commit": "npm run format && npm run build && npm run generate-docs && npm run package"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.6.0"
+    "@actions/core": "^1.6.0",
+    "@folkforms/line-endings": "^0.0.12"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",

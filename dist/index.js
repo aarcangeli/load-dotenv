@@ -47,27 +47,35 @@ function run() {
         const ifNoFilesFound = core.getInput('if-file-not-found');
         const inputPath = core.getInput('path');
         const quiet = core.getBooleanInput('quiet');
+        const filenames = core.getInput('filenames');
         const fullDirectory = path_1.default.resolve(inputPath);
-        const fullPath = path_1.default.join(fullDirectory, '.env');
-        if (!fs.existsSync(fullPath)) {
-            switch (ifNoFilesFound) {
-                case 'warn': {
-                    core.warning(`.env file not found in '${fullDirectory}'`);
-                    break;
+        let mergedObject = {};
+        for (const name of filenames.split('\n')) {
+            const fullPath = path_1.default.join(fullDirectory, filenames);
+            if (!fs.existsSync(fullPath)) {
+                switch (ifNoFilesFound) {
+                    case 'warn': {
+                        core.warning(`.env file not found in '${fullDirectory}'`);
+                        break;
+                    }
+                    case 'error': {
+                        core.setFailed(`.env file not found in '${fullDirectory}'`);
+                        break;
+                    }
+                    case 'ignore': {
+                        core.info(`.env file not found in '${fullDirectory}'`);
+                        break;
+                    }
                 }
-                case 'error': {
-                    core.setFailed(`.env file not found in '${fullDirectory}'`);
-                    break;
-                }
-                case 'ignore': {
-                    core.info(`.env file not found in '${fullDirectory}'`);
-                    break;
-                }
+                return;
             }
-            return;
+            if (!quiet) {
+                core.info(`Loading ${fullPath}`);
+            }
+            const env = dotenv.parse(fs.readFileSync(fullPath));
+            mergedObject = Object.assign(Object.assign({}, mergedObject), env);
         }
-        const env = dotenv.parse(fs.readFileSync(fullPath));
-        for (const entry of Object.entries(env)) {
+        for (const entry of Object.entries(mergedObject)) {
             if (!quiet) {
                 core.info(`${entry[0]} = ${entry[1]}`);
             }
