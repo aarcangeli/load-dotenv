@@ -33,7 +33,7 @@ This action allows reding environment variables from a `.env` file.
 ```
 <!-- end usage -->
 
-## Examples
+## Example
 
 ```yaml
 - uses: aarcangeli/load-dotenv@v3
