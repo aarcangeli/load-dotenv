@@ -36,7 +36,8 @@ This action allows reding environment variables from a `.env` file.
 ## Example
 
 ```yaml
-- uses: aarcangeli/load-dotenv@v3
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v3
   with:
     path: 'backend/new'
     filenames: |
