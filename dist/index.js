@@ -47,19 +47,20 @@ function run() {
         const ifNoFilesFound = core.getInput('if-file-not-found');
         const inputPath = core.getInput('path');
         const quiet = core.getBooleanInput('quiet');
-        const fullPath = path_1.default.resolve(inputPath, '.env');
+        const fullDirectory = path_1.default.resolve(inputPath);
+        const fullPath = path_1.default.join(fullDirectory, '.env');
         if (!fs.existsSync(fullPath)) {
             switch (ifNoFilesFound) {
                 case 'warn': {
-                    core.warning(`No files were found with the provided path: ${inputPath}. No artifacts will be uploaded.`);
+                    core.warning(`.env file not found in '${fullDirectory}'`);
                     break;
                 }
                 case 'error': {
-                    core.setFailed(`No files were found with the provided path: ${inputPath}. No artifacts will be uploaded.`);
+                    core.setFailed(`.env file not found in '${fullDirectory}'`);
                     break;
                 }
                 case 'ignore': {
-                    core.info(`No files were found with the provided path: ${inputPath}. No artifacts will be uploaded.`);
+                    core.info(`.env file not found in '${fullDirectory}'`);
                     break;
                 }
             }
