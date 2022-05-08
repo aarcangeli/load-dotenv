@@ -47,18 +47,26 @@ This action allows reading environment variables from a `.env` file.
     if-file-not-found: error
 ```
 
-## Contribution
+## Contributing
+
+Any contributions are welcome and appreciated.
+
+If you find a bug in the source code or a mistake in the documentation, you can [submit an issue](https://github.com/aarcangeli/load-dotenv/issues/new) to the GitHub Repository.
+Even better, you can [submit a Pull Request](https://github.com/aarcangeli/load-dotenv/pulls) with a fix.
+
+**Build from source**
 
 ```shell
 # Get source code
 git clone git@github.com:aarcangeli/load-dotenv.git && cd load-dotenv
 # Install dependencies
 npm install
-# Always before a commit
+# Reformat, build, package and update documentation
+# Always run before a commit.
 npm run pre-commit
 ```
 
-Before release:
+**Memo before release**
 
 - Update version number in `generate-docs.ts`
 - Update version number on this readme
