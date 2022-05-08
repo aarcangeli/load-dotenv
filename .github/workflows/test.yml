@@ -102,7 +102,7 @@ jobs:
       - uses: ./
         with:
           path: .github/test-dir
-          filenames:
+          filenames: |
             .env
             .env.test
 
