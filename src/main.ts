@@ -13,20 +13,20 @@ async function run(): Promise<void> {
   let mergedObject = {}
 
   for (const name of filenames.split('\n')) {
-    const fullPath = path.join(fullDirectory, filenames)
+    const fullPath = path.join(fullDirectory, name.trim())
 
     if (!fs.existsSync(fullPath)) {
       switch (ifNoFilesFound) {
         case 'warn': {
-          core.warning(`.env file not found in '${fullDirectory}'`)
+          core.warning(`${name} file not found in '${fullDirectory}'`)
           break
         }
         case 'error': {
-          core.setFailed(`.env file not found in '${fullDirectory}'`)
+          core.setFailed(`${name} file not found in '${fullDirectory}'`)
           break
         }
         case 'ignore': {
-          core.info(`.env file not found in '${fullDirectory}'`)
+          core.info(`${name} file not found in '${fullDirectory}'`)
           break
         }
       }
