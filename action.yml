@@ -2,10 +2,16 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  milliseconds: # change this
-    required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  path:
+    required: false
+    description: |
+      The directory to find the '.env' file. 
+      Relative paths are resolved inside the workspace directory
+    default: '.'
+  quiet:
+    required: false
+    description: If true, don't print variables
+    default: 'false'
 runs:
   using: 'node16'
   main: 'dist/index.js'

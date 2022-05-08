@@ -1,19 +1,19 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as dotenv from 'dotenv'
+import * as fs from 'fs'
 
 async function run(): Promise<void> {
-  try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+  const path: string = core.getInput('path')
+  const quiet: boolean = core.getBooleanInput('quiet')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+  const env: object = dotenv.parse(fs.readFileSync(`${path}/.env`))
 
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+  for (const entry of Object.entries(env)) {
+    if (!quiet) {
+      core.info(`${entry[0]} = ${entry[1]}`)
+    }
+    core.exportVariable(entry[0], entry[1])
   }
 }
 
-run()
+run().catch(error => core.setFailed(error.message))
