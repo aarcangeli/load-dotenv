@@ -1,6 +1,6 @@
 # load-dotenv
 
-This action allows reding environment variables from a `.env` file.
+This action allows reading environment variables from a `.env` file.
 
 [![build-test](https://github.com/aarcangeli/load-dotenv/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/aarcangeli/load-dotenv/actions/workflows/test.yml?query=branch%3Amain)
 
@@ -8,7 +8,7 @@ This action allows reding environment variables from a `.env` file.
 
 <!-- start usage -->
 ```yaml
-- uses: aarcangeli/load-dotenv@v3
+- uses: aarcangeli/load-dotenv@v1.0.0
   with:
     # The directory to find the '.env' file.
     # Relative paths are resolved inside the workspace directory
@@ -37,7 +37,7 @@ This action allows reding environment variables from a `.env` file.
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v3
+  uses: aarcangeli/load-dotenv@v1.0.0
   with:
     path: 'backend/new'
     filenames: |
@@ -55,5 +55,12 @@ git clone git@github.com:aarcangeli/load-dotenv.git && cd load-dotenv
 # Install dependencies
 npm install
 # Always before a commit
-npm run package
+npm run pre-commit
 ```
+
+Before release:
+
+- Update version number in `generate-docs.ts`
+- Update version number on this readme
+- run locally `npm run pre-commit`
+- push everything
