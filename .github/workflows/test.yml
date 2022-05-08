@@ -24,7 +24,7 @@ jobs:
 
       - name: Verify Export
         run: |
-          if [[ "$TEST_EXPORT" != "foo2" ]]; then
+          if [[ "$TEST_EXPORT" != "foo" ]]; then
             echo Expected TEST_EXPORT set
             exit 1
           fi
