@@ -8,7 +8,7 @@ This action allows reading environment variables from a `.env` file.
 
 <!-- start usage -->
 ```yaml
-- uses: aarcangeli/load-dotenv@v1.0.0
+- uses: aarcangeli/load-dotenv@v1.1.0
   with:
     # The directory to find the '.env' file.
     # Relative paths are resolved inside the workspace directory
@@ -46,7 +46,7 @@ Load a single `.env` file from the root directory.
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
 ```
 
 ```.dotenv
@@ -59,7 +59,7 @@ FOO=bar
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
   with:
     filenames: |
       .env
@@ -81,7 +81,7 @@ FOO=test
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
   with:
     expand: true
 ```
@@ -102,7 +102,7 @@ When multiple filenames are provided, all the options are merged to a single obj
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
   with:
     filenames: |
       .env
@@ -131,7 +131,7 @@ It is possible to ignore or warn if the file is not found.
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
   with:
     if-file-not-found: 'ignore'
 ```
@@ -140,7 +140,7 @@ It is possible to ignore or warn if the file is not found.
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
   with:
     path: 'backend/new'
     quiet: false
@@ -150,7 +150,7 @@ It is possible to ignore or warn if the file is not found.
 
 ```yaml
 - name: Load .env file
-  uses: aarcangeli/load-dotenv@v1.0.0
+  uses: aarcangeli/load-dotenv@v1.1.0
   with:
     path: '.'
     filenames: '.env'
@@ -180,7 +180,10 @@ yarn all
 
 **Memo before release**
 
+- Choose a new version number
 - Update version number in `generate-docs.ts`
-- Update version number on this readme
+- Update version number in `package.json`
+- Update version number in this README
 - run locally `yarn all`
 - push everything
+- create a new release on github

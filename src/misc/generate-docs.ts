@@ -120,7 +120,7 @@ function updateUsage(
 }
 
 updateUsage(
-  'aarcangeli/load-dotenv@v1.0.0',
+  'aarcangeli/load-dotenv@v1.1.0',
   path.join(__dirname, '..', '..', 'action.yml'),
   path.join(__dirname, '..', '..', 'README.md')
 )
