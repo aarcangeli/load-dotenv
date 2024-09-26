@@ -83,7 +83,7 @@ FOO=test
 - name: Load .env file
   uses: aarcangeli/load-dotenv@v1.0.0
   with:
-    quiet: false
+    expand: true
 ```
 
 ```.dotenv
@@ -107,7 +107,7 @@ When multiple filenames are provided, all the options are merged to a single obj
     filenames: |
       .env
       .env.test
-    quiet: false
+    expand: true
 ```
 
 ```.dotenv
