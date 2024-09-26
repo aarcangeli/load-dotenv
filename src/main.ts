@@ -26,14 +26,14 @@ async function run(): Promise<void> {
         }
         case 'error': {
           core.setFailed(`${name} file not found in '${fullDirectory}'`)
-          break
+          return // Stop execution
         }
         case 'ignore': {
           core.info(`${name} file not found in '${fullDirectory}'`)
           break
         }
       }
-      return
+      continue
     }
 
     if (!quiet) {

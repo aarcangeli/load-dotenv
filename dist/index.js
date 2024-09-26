@@ -66,14 +66,14 @@ function run() {
                     }
                     case 'error': {
                         core.setFailed(`${name} file not found in '${fullDirectory}'`);
-                        break;
+                        return; // Stop execution
                     }
                     case 'ignore': {
                         core.info(`${name} file not found in '${fullDirectory}'`);
                         break;
                     }
                 }
-                return;
+                continue;
             }
             if (!quiet) {
                 core.info(`Loading ${fullPath}`);
@@ -86,7 +86,10 @@ function run() {
             if (!quiet) {
                 core.info('Expanding variables');
             }
-            const dotenvExpandOutput = dotenvExpand.expand({ parsed: mergedObject, processEnv: {} });
+            const dotenvExpandOutput = dotenvExpand.expand({
+                parsed: mergedObject,
+                processEnv: {}
+            });
             if (dotenvExpandOutput.error) {
                 throw dotenvExpandOutput.error;
             }
