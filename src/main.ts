@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 import * as dotenvExpand from 'dotenv-expand'
 import path from 'path'
+import {DotenvParseOutput} from 'dotenv'
 
 async function run(): Promise<void> {
   const ifNoFilesFound: string = core.getInput('if-file-not-found')
@@ -12,7 +13,7 @@ async function run(): Promise<void> {
   const expand: boolean = core.getBooleanInput('expand')
 
   const fullDirectory = path.resolve(inputPath)
-  let mergedObject = {}
+  let mergedObject: DotenvParseOutput = {}
 
   for (const name of filenames.split('\n').map(value => value.trim())) {
     const fullPath = path.join(fullDirectory, name)
@@ -44,7 +45,17 @@ async function run(): Promise<void> {
   }
 
   if (expand) {
-    mergedObject = dotenvExpand.expand(mergedObject)
+    if (!quiet) {
+      core.info('Expanding variables')
+    }
+    const dotenvExpandOutput = dotenvExpand.expand({parsed: mergedObject})
+    if (dotenvExpandOutput.error) {
+      throw dotenvExpandOutput.error
+    }
+    if (!dotenvExpandOutput.parsed) {
+      throw new Error('No parsed output from dotenv-expand')
+    }
+    mergedObject = dotenvExpandOutput.parsed
   }
 
   for (const entry of Object.entries(mergedObject)) {

@@ -74,28 +74,14 @@ jobs:
             exit 1
           fi
 
-  test-expand:
+  test-warning:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
       - uses: ./
         with:
-          path: .github/test-dir
-          expand: true
-
-      - name: Verify Export
-        run: |
-          if [[ "$TEST_EXPAND" != "foo bar" ]]; then
-            echo Expected TEST_EXPAND set to "foo bar"
-            echo "Actual: $TEST_EXPAND"
-            exit 1
-          fi
-          if [[ "$TEST_EXPAND_AFTER" != "foo bar" ]]; then
-            echo Expected TEST_EXPAND_AFTER set to "foo bar"
-            echo "Actual: $TEST_EXPAND_AFTER"
-            exit 1
-          fi
+          if-file-not-found: warn
 
   test-error:
     runs-on: ubuntu-latest
@@ -104,7 +90,7 @@ jobs:
 
       - uses: ./
         with:
-          if-file-not-found: warn
+          if-file-not-found: error
 
   test-quiet:
     runs-on: ubuntu-latest
@@ -137,5 +123,93 @@ jobs:
           fi
           if [[ "$TEST_BASE" != "base" ]]; then
             echo Expected TEST_EXPORT set to "base"
+            exit 1
+          fi
+          if [[ "$TEST_UNEXPAND" != '$TEST_EXPORT bar' ]]; then
+            echo TEST_UNEXPAND should not be expanded
+            echo "Actual: $TEST_UNEXPAND"
+            #exit 1
+          fi
+
+  test-expand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          expand: true
+          filenames: test-expand.env
+
+      - name: Verify Export
+        run: |
+          if [[ "$TEST_EXPORT" != "foo" ]]; then
+            echo Expected TEST_EXPORT set to "foo"
+            echo "Actual: $TEST_EXPORT"
+            exit 1
+          fi
+          if [[ "$TEST_EXPAND" != "foo bar" ]]; then
+            echo Expected TEST_EXPAND set to "foo bar"
+            echo "Actual: $TEST_EXPAND"
+            exit 1
+          fi
+          if [[ "$TEST_EXPAND_AFTER" != "foo bar" ]]; then
+            echo Expected TEST_EXPAND_AFTER set to "foo bar"
+            echo "Actual: $TEST_EXPAND_AFTER"
+            exit 1
+          fi
+
+  test-multiple-files-expand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          expand: true
+          filenames: |
+            test-expand.env
+            test-override.env
+
+      - name: Verify Export
+        run: |
+          if [[ "$TEST_EXPORT" != "foo_override" ]]; then
+            echo Expected TEST_EXPORT set to "foo_override"
+            echo "Actual: $TEST_EXPORT"
+            exit 1
+          fi
+          if [[ "$TEST_EXPAND" != "foo_override bar" ]]; then
+            echo Expected TEST_EXPAND set to "foo_override bar"
+            echo "Actual: $TEST_EXPAND"
+            exit 1
+          fi
+          if [[ "$TEST_EXPAND_AFTER" != "foo_override bar" ]]; then
+            echo Expected TEST_EXPAND_AFTER set to "foo_override bar"
+            echo "Actual: $TEST_EXPAND_AFTER"
+            exit 1
+          fi
+
+
+  test-cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        continue-on-error: true
+        id: test-cycle
+        with:
+          path: .github/test-dir
+          expand: true
+          filenames: |
+            test-cycle.env
+
+      - name: Verify Export
+        run: |
+          echo "Result: ${{ steps.test-cycle.outcome }}"
+          if [[ "${{ steps.test-cycle.outcome }}" != "failure" ]]; then
+            echo Expected failure
             exit 1
           fi

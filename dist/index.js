@@ -82,7 +82,17 @@ function run() {
             mergedObject = Object.assign(Object.assign({}, mergedObject), env);
         }
         if (expand) {
-            mergedObject = dotenvExpand.expand(mergedObject);
+            if (!quiet) {
+                core.info('Expanding variables');
+            }
+            const dotenvExpandOutput = dotenvExpand.expand({ parsed: mergedObject });
+            if (dotenvExpandOutput.error) {
+                throw dotenvExpandOutput.error;
+            }
+            if (!dotenvExpandOutput.parsed) {
+                throw new Error('No parsed output from dotenv-expand');
+            }
+            mergedObject = dotenvExpandOutput.parsed;
         }
         for (const entry of Object.entries(mergedObject)) {
             if (!quiet) {
@@ -304,6 +314,7 @@ exports.addPath = addPath;
  */
 function getInput(name, options) {
     const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
+    info(`getInput: ${name} = ${val}`);
     if (options && options.required && !val) {
         throw new Error(`Input required and not supplied: ${name}`);
     }
@@ -536,6 +547,7 @@ Object.defineProperty(exports, "toPosixPath", ({ enumerable: true, get: function
 Object.defineProperty(exports, "toWin32Path", ({ enumerable: true, get: function () { return path_utils_1.toWin32Path; } }));
 Object.defineProperty(exports, "toPlatformPath", ({ enumerable: true, get: function () { return path_utils_1.toPlatformPath; } }));
 //# sourceMappingURL=core.js.map
+
 
 /***/ }),
 
