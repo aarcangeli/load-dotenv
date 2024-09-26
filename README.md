@@ -44,8 +44,6 @@ This action allows reading environment variables from a `.env` file.
 
 Load a single `.env` file from the root directory.
 
-The parsing is done using [dotenv](https://github.com/motdotla/dotenv)
-
 ```yaml
 - name: Load .env file
   uses: aarcangeli/load-dotenv@v1.0.0
@@ -101,8 +99,6 @@ GET_ASSETS=$URL/assets
 ### Expand variables with multiple files
 
 When multiple filenames are provided, all the options are merged to a single object and then expanded.
-
-The expansion is performed using [dotenv-expand](https://github.com/motdotla/dotenv-expand)
 
 ```yaml
 - name: Load .env file
