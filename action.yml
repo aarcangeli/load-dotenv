@@ -28,7 +28,7 @@ inputs:
         ignore: Do not output any warnings or errors, the action does not fail
     default: 'error'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   icon: settings
