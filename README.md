@@ -93,7 +93,7 @@ FOO=test
 ENVIROMENT=stage
 DOMAIN=example.com
 # URL will be https://api-stage.example.com
-URL=https://api-$ENVIROMENT.$DOMAIN
+URL=https://api-${ENVIROMENT}.${DOMAIN}
 # GET_ASSETS will be https://api-stage.example.com/assets
 GET_ASSETS=$URL/assets
 ```
@@ -118,7 +118,7 @@ The expansion is performed using [dotenv-expand](https://github.com/motdotla/dot
 # .env
 ENVIROMENT=stage
 DOMAIN=example.com
-URL=https://api-$ENVIROMENT.$DOMAIN
+URL=https://api-${ENVIROMENT}.${DOMAIN}
 GET_ASSETS=$URL/assets
 ```
 

@@ -86,7 +86,7 @@ function run() {
             if (!quiet) {
                 core.info('Expanding variables');
             }
-            const dotenvExpandOutput = dotenvExpand.expand({ parsed: mergedObject });
+            const dotenvExpandOutput = dotenvExpand.expand({ parsed: mergedObject, processEnv: {} });
             if (dotenvExpandOutput.error) {
                 throw dotenvExpandOutput.error;
             }
