@@ -90,6 +90,7 @@ jobs:
 
       - uses: ./
         id: test-failure
+        continue-on-error: true
         with:
           if-file-not-found: error
 
