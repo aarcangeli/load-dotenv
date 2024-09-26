@@ -1,8 +1,10 @@
 {
   "name": "typescript-action",
+  "description": "Read .env file and export variables to $GITHUB_ENV",
   "version": "0.0.0",
+  "author": "Alessandro Arcangeli <alessandroarcangeli.rm@gmail.com>",
   "private": true,
-  "description": "TypeScript template action",
+  "homepage": "https://github.com/aarcangeli/load-dotenv",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc && line-endings -l LF -w lib/**",
@@ -11,8 +13,7 @@
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "generate-docs": "node lib/misc/generate-docs.js",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm run package",
-    "pre-commit": "npm run format && npm run build && npm run generate-docs && npm run package"
+    "all": "yarn build && yarn format && yarn lint && yarn generate-docs && yarn package"
   },
   "repository": {
     "type": "git",
@@ -23,23 +24,25 @@
     "node",
     "setup"
   ],
-  "author": "",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.8.0",
     "@folkforms/line-endings": "^0.0.12"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.11.1",
     "@types/js-yaml": "^4.0.5",
-    "@types/node": "^17.0.31",
-    "@typescript-eslint/eslint-plugin": "^5.22.0",
-    "@typescript-eslint/parser": "^5.22.0",
-    "@vercel/ncc": "^0.31.1",
+    "@types/node": "^22.7.3",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vercel/ncc": "^0.38.2",
     "dotenv": "^16.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-github": "^4.3.2",
+    "eslint": "^8.31.0",
+    "eslint-plugin-github": "^4.6.0",
+    "globals": "^15.9.0",
     "js-yaml": "^4.1.0",
-    "prettier": "2.6.2",
-    "typescript": "^4.6.4"
+    "prettier": "3.3.3",
+    "typescript": "^4.9.4"
   }
 }

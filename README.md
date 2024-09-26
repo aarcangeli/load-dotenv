@@ -60,15 +60,15 @@ Even better, you can [submit a Pull Request](https://github.com/aarcangeli/load-
 # Get source code
 git clone git@github.com:aarcangeli/load-dotenv.git && cd load-dotenv
 # Install dependencies
-npm install
+yarn install
 # Reformat, build, package and update documentation
 # Always run before a commit.
-npm run pre-commit
+yarn all
 ```
 
 **Memo before release**
 
 - Update version number in `generate-docs.ts`
 - Update version number on this readme
-- run locally `npm run pre-commit`
+- run locally `yarn all`
 - push everything
