@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import * as dotenv from 'dotenv'
 import * as fs from 'fs'
+import * as dotenvExpand from 'dotenv-expand'
 import path from 'path'
 
 async function run(): Promise<void> {
@@ -8,6 +9,7 @@ async function run(): Promise<void> {
   const inputPath: string = core.getInput('path')
   const quiet: boolean = core.getBooleanInput('quiet')
   const filenames = core.getInput('filenames')
+  const expand: boolean = core.getBooleanInput('expand')
 
   const fullDirectory = path.resolve(inputPath)
   let mergedObject = {}
@@ -39,6 +41,10 @@ async function run(): Promise<void> {
 
     const env = dotenv.parse(fs.readFileSync(fullPath))
     mergedObject = {...mergedObject, ...env}
+  }
+
+  if (expand) {
+    mergedObject = dotenvExpand.expand(mergedObject)
   }
 
   for (const entry of Object.entries(mergedObject)) {

@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const dotenv = __importStar(__nccwpck_require__(8889));
 const fs = __importStar(__nccwpck_require__(9896));
+const dotenvExpand = __importStar(__nccwpck_require__(7596));
 const path_1 = __importDefault(__nccwpck_require__(6928));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,6 +53,7 @@ function run() {
         const inputPath = core.getInput('path');
         const quiet = core.getBooleanInput('quiet');
         const filenames = core.getInput('filenames');
+        const expand = core.getBooleanInput('expand');
         const fullDirectory = path_1.default.resolve(inputPath);
         let mergedObject = {};
         for (const name of filenames.split('\n').map(value => value.trim())) {
@@ -78,6 +80,9 @@ function run() {
             }
             const env = dotenv.parse(fs.readFileSync(fullPath));
             mergedObject = Object.assign(Object.assign({}, mergedObject), env);
+        }
+        if (expand) {
+            mergedObject = dotenvExpand.expand(mergedObject);
         }
         for (const entry of Object.entries(mergedObject)) {
             if (!quiet) {
@@ -1931,6 +1936,102 @@ class DecodedURL extends URL {
     }
 }
 //# sourceMappingURL=proxy.js.map
+
+/***/ }),
+
+/***/ 7596:
+/***/ ((module) => {
+
+"use strict";
+
+
+// * /
+// *   (\\)?            # is it escaped with a backslash?
+// *   (\$)             # literal $
+// *   (?!\()           # shouldnt be followed by parenthesis
+// *   (\{?)            # first brace wrap opening
+// *   ([\w.]+)         # key
+// *   (?::-((?:\$\{(?:\$\{(?:\$\{[^}]*\}|[^}])*}|[^}])*}|[^}])+))? # optional default nested 3 times
+// *   (\}?)            # last brace warp closing
+// * /xi
+
+const DOTENV_SUBSTITUTION_REGEX = /(\\)?(\$)(?!\()(\{?)([\w.]+)(?::?-((?:\$\{(?:\$\{(?:\$\{[^}]*\}|[^}])*}|[^}])*}|[^}])+))?(\}?)/gi
+
+function _resolveEscapeSequences (value) {
+  return value.replace(/\\\$/g, '$')
+}
+
+function interpolate (value, processEnv, parsed) {
+  return value.replace(DOTENV_SUBSTITUTION_REGEX, (match, escaped, dollarSign, openBrace, key, defaultValue, closeBrace) => {
+    if (escaped === '\\') {
+      return match.slice(1)
+    } else {
+      if (processEnv[key]) {
+        if (processEnv[key] === parsed[key]) {
+          return processEnv[key]
+        } else {
+          // scenario: PASSWORD_EXPAND_NESTED=${PASSWORD_EXPAND}
+          return interpolate(processEnv[key], processEnv, parsed)
+        }
+      }
+
+      if (parsed[key]) {
+        // avoid recursion from EXPAND_SELF=$EXPAND_SELF
+        if (parsed[key] === value) {
+          return parsed[key]
+        } else {
+          return interpolate(parsed[key], processEnv, parsed)
+        }
+      }
+
+      if (defaultValue) {
+        if (defaultValue.startsWith('$')) {
+          return interpolate(defaultValue, processEnv, parsed)
+        } else {
+          return defaultValue
+        }
+      }
+
+      return ''
+    }
+  })
+}
+
+function expand (options) {
+  let processEnv = process.env
+  if (options && options.processEnv != null) {
+    processEnv = options.processEnv
+  }
+
+  for (const key in options.parsed) {
+    let value = options.parsed[key]
+
+    const inProcessEnv = Object.prototype.hasOwnProperty.call(processEnv, key)
+    if (inProcessEnv) {
+      if (processEnv[key] === options.parsed[key]) {
+        // assume was set to processEnv from the .env file if the values match and therefore interpolate
+        value = interpolate(value, processEnv, options.parsed)
+      } else {
+        // do not interpolate - assume processEnv had the intended value even if containing a $.
+        value = processEnv[key]
+      }
+    } else {
+      // not inProcessEnv so assume interpolation for this .env key
+      value = interpolate(value, processEnv, options.parsed)
+    }
+
+    options.parsed[key] = _resolveEscapeSequences(value)
+  }
+
+  for (const processKey in options.parsed) {
+    processEnv[processKey] = options.parsed[processKey]
+  }
+
+  return options
+}
+
+module.exports.expand = expand
+
 
 /***/ }),
 

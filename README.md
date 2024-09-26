@@ -30,6 +30,11 @@ This action allows reading environment variables from a `.env` file.
     #  ignore: Do not output any warnings or errors, the action does not fail
     # Default: error
     if-file-not-found: ''
+
+    # If true, expand variables in the .env file. For example, if the .env file
+    # contains `FOO=bar` and `BAR=$FOO`, the value of `BAR` will be `bar`.
+    # Default: false
+    expand: ''
 ```
 <!-- end usage -->
 

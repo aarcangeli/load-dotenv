@@ -73,6 +73,19 @@ jobs:
             echo Expected TEST_BASE set to "base"
             exit 1
           fi
+
+  test-expand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          expand: true
+
+      - name: Verify Export
+        run: |
           if [[ "$TEST_EXPAND" != "foo bar" ]]; then
             echo Expected TEST_EXPAND set to "foo bar"
             echo "Actual: $TEST_EXPAND"
