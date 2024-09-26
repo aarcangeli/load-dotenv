@@ -44,7 +44,7 @@ async function run(): Promise<void> {
     mergedObject = {...mergedObject, ...env}
   }
 
-  core.debug(`Merged object: ${JSON.stringify(mergedObject)}`)
+  core.debug(`Merged object before expansion: ${JSON.stringify(mergedObject)}`)
 
   if (expand) {
     if (!quiet) {
@@ -58,6 +58,12 @@ async function run(): Promise<void> {
       throw new Error('No parsed output from dotenv-expand')
     }
     mergedObject = dotenvExpandOutput.parsed
+  }
+
+  core.debug(`Merged object after expansion: ${JSON.stringify(mergedObject)}`)
+
+  if (!quiet) {
+    core.info('Setting environment variables')
   }
 
   for (const entry of Object.entries(mergedObject)) {

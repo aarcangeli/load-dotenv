@@ -38,18 +38,129 @@ This action allows reading environment variables from a `.env` file.
 ```
 <!-- end usage -->
 
-## Example
+## Examples
+
+### Load a single `.env` file
+
+Load a single `.env` file from the root directory.
+
+The parsing is done using [dotenv](https://github.com/motdotla/dotenv)
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1.0.0
+```
+
+```.dotenv
+# .env
+# The variable FOO will be exported with the value bar
+FOO=bar
+```
+
+### Load multiple `.env` files
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1.0.0
+  with:
+    filenames: |
+      .env
+      .env.test
+```
+
+```.dotenv
+# .env
+FOO=bar
+```
+
+```dotenv
+# .env.test
+# The variable FOO will be exported with the value test
+FOO=test
+```
+
+### Expand variables
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1.0.0
+  with:
+    quiet: false
+```
+
+```.dotenv
+# .env
+ENVIROMENT=stage
+DOMAIN=example.com
+# URL will be https://api-stage.example.com
+URL=https://api-$ENVIROMENT.$DOMAIN
+# GET_ASSETS will be https://api-stage.example.com/assets
+GET_ASSETS=$URL/assets
+```
+
+### Expand variables with multiple files
+
+When multiple filenames are provided, all the options are merged to a single object and then expanded.
+
+The expansion is performed using [dotenv-expand](https://github.com/motdotla/dotenv-expand)
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1.0.0
+  with:
+    filenames: |
+      .env
+      .env.test
+    quiet: false
+```
+
+```.dotenv
+# .env
+ENVIROMENT=stage
+DOMAIN=example.com
+URL=https://api-$ENVIROMENT.$DOMAIN
+GET_ASSETS=$URL/assets
+```
+
+```dotenv
+# production.dotenv
+# URL will be https://api-prod.example.com
+# GET_ASSETS will be https://api-prod.example.com/assets
+ENVIROMENT=prod
+```
+
+### Ignore if file not found
+
+It is possible to ignore or warn if the file is not found.
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1.0.0
+  with:
+    if-file-not-found: 'ignore'
+```
+
+# Specify a different path
 
 ```yaml
 - name: Load .env file
   uses: aarcangeli/load-dotenv@v1.0.0
   with:
     path: 'backend/new'
-    filenames: |
-      .env
-      .env.test
     quiet: false
-    if-file-not-found: error
+```
+
+### All options with default values
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1.0.0
+  with:
+    path: '.'
+    filenames: '.env'
+    quiet: 'false'
+    if-file-not-found: 'error'
+    expand: 'false'
 ```
 
 ## Contributing

@@ -56,11 +56,11 @@ jobs:
       - name: Verify Export
         run: |
           if [[ "$TEST_EXPORT" != "foo" ]]; then
-            echo Expected TEST_EXPORT set to "foo"
+            echo 'Expected $TEST_EXPORT set to "foo"'
             exit 1
           fi
           if [[ "$TEST_BASE" != "base" ]]; then
-            echo Expected TEST_BASE set to "base"
+            echo 'Expected $TEST_BASE set to "base"'
             exit 1
           fi
           if [[ "$TEST_UNEXPAND" != '$TEST_EXPORT bar' ]]; then
@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "Result: ${{ steps.test-failure.outcome }}"
           if [[ "${{ steps.test-failure.outcome }}" != "failure" ]]; then
-            echo Expected failure
+            echo 'Expected failure'
             exit 1
           fi
 
@@ -123,11 +123,11 @@ jobs:
       - name: Verify Export
         run: |
           if [[ "$TEST_EXPORT" != "foo_override" ]]; then
-            echo Expected TEST_EXPORT set to "foo_override"
+            echo 'Expected $TEST_EXPORT set to "foo_override"'
             exit 1
           fi
           if [[ "$TEST_BASE" != "base" ]]; then
-            echo Expected TEST_EXPORT set to "base"
+            echo 'Expected $TEST_EXPORT set to "base"'
             exit 1
           fi
 
@@ -145,18 +145,28 @@ jobs:
       - name: Verify Export
         run: |
           if [[ "$TEST_EXPORT" != "foo" ]]; then
-            echo Expected TEST_EXPORT set to "foo"
+            echo 'Expected $TEST_EXPORT set to "foo"'
             echo "Actual: $TEST_EXPORT"
             exit 1
           fi
           if [[ "$TEST_EXPAND" != "foo bar" ]]; then
-            echo Expected TEST_EXPAND set to "foo bar"
+            echo 'Expected $TEST_EXPAND set to "foo bar"'
             echo "Actual: $TEST_EXPAND"
             exit 1
           fi
           if [[ "$TEST_EXPAND_AFTER" != "foo bar" ]]; then
-            echo Expected TEST_EXPAND_AFTER set to "foo bar"
+            echo 'Expected $TEST_EXPAND_AFTER set to "foo bar"'
             echo "Actual: $TEST_EXPAND_AFTER"
+            exit 1
+          fi
+          if [[ "$URL" != "https://api-stage.example.com" ]]; then
+            echo 'Expected $URL set to "https://api-stage.example.com"'
+            echo "Actual: $URL"
+            exit 1
+          fi
+          if [[ "$GET_ASSETS" != "https://api-stage.example.com/assets" ]]; then
+            echo 'Expected $GET_ASSETS set to "https://api-stage.example.com/assets"'
+            echo "Actual: $GET_ASSETS"
             exit 1
           fi
 
@@ -176,18 +186,28 @@ jobs:
       - name: Verify Export
         run: |
           if [[ "$TEST_EXPORT" != "foo_override" ]]; then
-            echo Expected TEST_EXPORT set to "foo_override"
+            echo 'Expected $TEST_EXPORT set to "foo_override"'
             echo "Actual: $TEST_EXPORT"
             exit 1
           fi
           if [[ "$TEST_EXPAND" != "foo_override bar" ]]; then
-            echo Expected TEST_EXPAND set to "foo_override bar"
+            echo 'Expected $TEST_EXPAND set to "foo_override bar"'
             echo "Actual: $TEST_EXPAND"
             exit 1
           fi
           if [[ "$TEST_EXPAND_AFTER" != "foo_override bar" ]]; then
-            echo Expected TEST_EXPAND_AFTER set to "foo_override bar"
+            echo 'Expected $TEST_EXPAND_AFTER set to "foo_override bar"'
             echo "Actual: $TEST_EXPAND_AFTER"
+            exit 1
+          fi
+          if [[ "$URL" != "https://api-prod.example.com" ]]; then
+            echo 'Expected $URL set to "https://api-prod.example.com"'
+            echo "Actual: $URL"
+            exit 1
+          fi
+          if [[ "$GET_ASSETS" != "https://api-prod.example.com/assets" ]]; then
+            echo 'Expected $GET_ASSETS set to "https://api-prod.example.com/assets"'
+            echo "Actual: $GET_ASSETS"
             exit 1
           fi
 
@@ -209,6 +229,6 @@ jobs:
         run: |
           echo "Result: ${{ steps.test-cycle.outcome }}"
           if [[ "${{ steps.test-cycle.outcome }}" != "failure" ]]; then
-            echo Expected failure
+            echo 'Expected failure'
             exit 1
           fi

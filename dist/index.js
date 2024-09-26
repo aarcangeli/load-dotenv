@@ -81,7 +81,7 @@ function run() {
             const env = dotenv.parse(fs.readFileSync(fullPath));
             mergedObject = Object.assign(Object.assign({}, mergedObject), env);
         }
-        core.debug(`Merged object: ${JSON.stringify(mergedObject)}`);
+        core.debug(`Merged object before expansion: ${JSON.stringify(mergedObject)}`);
         if (expand) {
             if (!quiet) {
                 core.info('Expanding variables');
@@ -94,6 +94,10 @@ function run() {
                 throw new Error('No parsed output from dotenv-expand');
             }
             mergedObject = dotenvExpandOutput.parsed;
+        }
+        core.debug(`Merged object after expansion: ${JSON.stringify(mergedObject)}`);
+        if (!quiet) {
+            core.info('Setting environment variables');
         }
         for (const entry of Object.entries(mergedObject)) {
             if (!quiet) {
@@ -547,7 +551,6 @@ Object.defineProperty(exports, "toPosixPath", ({ enumerable: true, get: function
 Object.defineProperty(exports, "toWin32Path", ({ enumerable: true, get: function () { return path_utils_1.toWin32Path; } }));
 Object.defineProperty(exports, "toPlatformPath", ({ enumerable: true, get: function () { return path_utils_1.toPlatformPath; } }));
 //# sourceMappingURL=core.js.map
-
 
 /***/ }),
 
