@@ -44,6 +44,8 @@ async function run(): Promise<void> {
     mergedObject = {...mergedObject, ...env}
   }
 
+  core.debug(`Merged object: ${JSON.stringify(mergedObject)}`)
+
   if (expand) {
     if (!quiet) {
       core.info('Expanding variables')

@@ -3,6 +3,7 @@ on:
   pull_request:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   # `dist/index.js` is a special file in Actions.
@@ -14,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set Node.js 16.x
         uses: actions/setup-node@v4
@@ -25,39 +26,28 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Rebuild the dist/ directory
-        run: |
-          yarn build
-          yarn package
+        run: yarn all
 
       - name: Compare the expected and actual dist/ directories
+        id: diff
         run: |
           if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
             echo "Detected uncommitted changes after build.  See status below:"
             git diff
             exit 1
           fi
-        id: diff
 
       # If index.js was different than expected, upload the expected version as an artifact
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         with:
           name: dist
           path: dist/
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          yarn install
-      - run: |
-          yarn all
-
   test-simple:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -73,11 +63,16 @@ jobs:
             echo Expected TEST_BASE set to "base"
             exit 1
           fi
+          if [[ "$TEST_UNEXPAND" != '$TEST_EXPORT bar' ]]; then
+            echo TEST_UNEXPAND should not be expanded
+            echo "Actual: $TEST_UNEXPAND"
+            #exit 1
+          fi
 
   test-warning:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -86,7 +81,7 @@ jobs:
   test-error:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: test-failure
@@ -105,7 +100,7 @@ jobs:
   test-quiet:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -116,7 +111,7 @@ jobs:
   test-multiple-files:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -135,16 +130,11 @@ jobs:
             echo Expected TEST_EXPORT set to "base"
             exit 1
           fi
-          if [[ "$TEST_UNEXPAND" != '$TEST_EXPORT bar' ]]; then
-            echo TEST_UNEXPAND should not be expanded
-            echo "Actual: $TEST_UNEXPAND"
-            #exit 1
-          fi
 
   test-expand:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -173,7 +163,7 @@ jobs:
   test-multiple-files-expand:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -201,11 +191,10 @@ jobs:
             exit 1
           fi
 
-
   test-cycle:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./
         continue-on-error: true

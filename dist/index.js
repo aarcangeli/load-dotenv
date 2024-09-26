@@ -81,6 +81,7 @@ function run() {
             const env = dotenv.parse(fs.readFileSync(fullPath));
             mergedObject = Object.assign(Object.assign({}, mergedObject), env);
         }
+        core.debug(`Merged object: ${JSON.stringify(mergedObject)}`);
         if (expand) {
             if (!quiet) {
                 core.info('Expanding variables');
@@ -314,7 +315,6 @@ exports.addPath = addPath;
  */
 function getInput(name, options) {
     const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
-    info(`getInput: ${name} = ${val}`);
     if (options && options.required && !val) {
         throw new Error(`Input required and not supplied: ${name}`);
     }
