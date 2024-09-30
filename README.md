@@ -177,15 +177,3 @@ yarn install
 # Always run before a commit.
 yarn all
 ```
-
-**Memo before release**
-
-- Choose a new version number
-- Update version number in `generate-docs.ts`
-- Update version number in `package.json`
-- Update version number in this README
-- run locally `yarn all`
-- push everything
-- Add a tag with the new version number
-- Move the tag "v1" to the new tag "v1.0.0
-- create a new release on github
