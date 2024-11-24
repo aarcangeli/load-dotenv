@@ -1,11 +1,14 @@
+import eslint from '@eslint/js'
+import tseslint from 'typescript-eslint'
 import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import globals from 'globals'
 import tsParser from '@typescript-eslint/parser'
 import importPlugin from 'eslint-plugin-import'
-import pluginFilenames from 'eslint-plugin-filenames'
 import eslintComments from 'eslint-plugin-eslint-comments'
 
-export default [
+export default tseslint.config([
+  eslint.configs.recommended,
+  tseslint.configs.strict,
   {
     ignores: ['dist/', 'lib/', 'node_modules/']
   },
@@ -16,7 +19,6 @@ export default [
     plugins: {
       '@typescript-eslint': typescriptEslint,
       'eslint-comments': eslintComments,
-      filenames: pluginFilenames,
       import: importPlugin
     },
 
@@ -38,8 +40,7 @@ export default [
       ...typescriptEslint.configs.recommended.rules,
       ...importPlugin.configs.errors.rules,
 
-      'eslint-comments/no-use': 'off',
-      'import/no-namespace': 'off',
+      'eslint-comments/no-use': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'error',
 
@@ -86,4 +87,4 @@ export default [
       '@typescript-eslint/unbound-method': 'error'
     }
   }
-]
+])
