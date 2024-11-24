@@ -8,11 +8,12 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc && line-endings -l LF -w lib/**",
-    "format": "prettier --write src/**/*.ts",
+    "format": "prettier --write src/**/*.ts *.mjs",
     "format-check": "prettier --check src/**/*.ts",
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --source-map --license licenses.txt",
     "generate-docs": "node lib/misc/generate-docs.js",
+    "eslint:inspector": "eslint-config-inspector",
     "all": "yarn build && yarn format && yarn lint && yarn generate-docs && yarn package"
   },
   "repository": {
@@ -26,24 +27,28 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.8.0",
+    "@actions/core": "^1.11.1",
+    "@eslint/compat": "^1.2.3",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.15.0",
     "@folkforms/line-endings": "^0.0.12",
-    "dotenv-expand": "^11.0.6"
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.9.3",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "@vercel/ncc": "^0.38.3",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.7",
+    "eslint": "^9.15.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.12.0",
+    "js-yaml": "^4.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.15.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.11.1",
-    "@types/js-yaml": "^4.0.5",
-    "@types/node": "^22.7.4",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
-    "@typescript-eslint/parser": "^8.7.0",
-    "@vercel/ncc": "^0.38.2",
-    "dotenv": "^16.0.0",
-    "eslint": "^8.31.0",
-    "eslint-plugin-github": "^4.6.0",
-    "globals": "^15.9.0",
-    "js-yaml": "^4.1.0",
-    "prettier": "3.3.3",
-    "typescript": "^4.9.4"
+    "@eslint/config-inspector": "^0.5.6"
   }
 }
