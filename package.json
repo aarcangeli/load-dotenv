@@ -30,7 +30,7 @@
     "@actions/core": "^1.11.1",
     "@eslint/compat": "^1.2.3",
     "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.15.0",
+    "@eslint/js": "^9.16.0",
     "@folkforms/line-endings": "^0.0.12",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.9.3",
