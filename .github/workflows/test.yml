@@ -211,6 +211,31 @@ jobs:
             exit 1
           fi
 
+  test-mask:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          expand: true
+          filenames: test-mask.env
+          mask-variables: |
+            TEST_SECRET
+            TEST_SECRET_EXPANDED
+
+      - name: Verify Export
+        run: |
+          if [[ "$TEST_SECRET" != "s3cr3t-value" ]]; then
+            echo 'Expected $TEST_SECRET to be exported unchanged'
+            exit 1
+          fi
+          if [[ "$TEST_SECRET_EXPANDED" != "s3cr3t-value-expanded" ]]; then
+            echo 'Expected $TEST_SECRET_EXPANDED to be exported unchanged'
+            exit 1
+          fi
+
   test-cycle:
     runs-on: ubuntu-latest
     steps:
