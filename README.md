@@ -35,6 +35,11 @@ This action allows reading environment variables from a `.env` file.
     # contains `FOO=bar` and `BAR=$FOO`, the value of `BAR` will be `bar`.
     # Default: false
     expand: ''
+
+    # Names of the variables whose values must be masked in the logs. Multiple names
+    # are allowed, one per line. Only the variables loaded by this action are masked.
+    # Default: 
+    mask-variables: ''
 ```
 <!-- end usage -->
 
@@ -136,6 +141,22 @@ It is possible to ignore or warn if the file is not found.
     if-file-not-found: 'ignore'
 ```
 
+### Mask variables in the logs
+
+The values of the listed variables are replaced with `***` in the logs of the job.
+This is useful for values that are generated and must not be committed, for example by a previous step.
+
+```yaml
+- name: Load .env file
+  uses: aarcangeli/load-dotenv@v1
+  with:
+    mask-variables: |
+      ACCESS_TOKEN
+      DB_PASSWORD
+```
+
+> Secrets should be stored in GitHub Actions secrets, not in a `.env` file committed to the repository.
+
 # Specify a different path
 
 ```yaml
@@ -157,6 +178,7 @@ It is possible to ignore or warn if the file is not found.
     quiet: 'false'
     if-file-not-found: 'error'
     expand: 'false'
+    mask-variables: ''
 ```
 
 ## Contributing

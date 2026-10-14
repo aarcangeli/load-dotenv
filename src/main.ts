@@ -5,12 +5,26 @@ import * as dotenvExpand from 'dotenv-expand'
 import path from 'path'
 import {DotenvParseOutput} from 'dotenv'
 
+function maskValues(names: string[], variables: DotenvParseOutput): void {
+  for (const name of names) {
+    const value = variables[name]
+    if (value) {
+      core.setSecret(value)
+    }
+  }
+}
+
 async function run(): Promise<void> {
   const ifNoFilesFound: string = core.getInput('if-file-not-found')
   const inputPath: string = core.getInput('path')
   const quiet: boolean = core.getBooleanInput('quiet')
   const filenames = core.getInput('filenames')
   const expand: boolean = core.getBooleanInput('expand')
+  const maskVariables = core
+    .getInput('mask-variables')
+    .split('\n')
+    .map(value => value.trim())
+    .filter(value => value.length > 0)
 
   const fullDirectory = path.resolve(inputPath)
   let mergedObject: DotenvParseOutput = {}
@@ -44,6 +58,9 @@ async function run(): Promise<void> {
     mergedObject = {...mergedObject, ...env}
   }
 
+  // Mask before any value is logged
+  maskValues(maskVariables, mergedObject)
+
   core.debug(`Merged object before expansion: ${JSON.stringify(mergedObject)}`)
 
   if (expand) {
@@ -61,6 +78,9 @@ async function run(): Promise<void> {
       throw new Error('No parsed output from dotenv-expand')
     }
     mergedObject = dotenvExpandOutput.parsed
+
+    // Expanded values can differ from the raw ones
+    maskValues(maskVariables, mergedObject)
   }
 
   core.debug(`Merged object after expansion: ${JSON.stringify(mergedObject)}`)

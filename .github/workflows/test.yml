@@ -211,6 +211,54 @@ jobs:
             exit 1
           fi
 
+  test-mask:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          expand: true
+          filenames: test-mask.env
+          mask-variables: |
+            TEST_SECRET
+            TEST_SECRET_EXPANDED
+
+      - name: Verify Export
+        run: |
+          if [[ "$TEST_SECRET" != "s3cr3t-value" ]]; then
+            echo 'Expected $TEST_SECRET to be exported unchanged'
+            exit 1
+          fi
+          if [[ "$TEST_SECRET_EXPANDED" != "s3cr3t-value-expanded" ]]; then
+            echo 'Expected $TEST_SECRET_EXPANDED to be exported unchanged'
+            exit 1
+          fi
+
+      # The masking itself is done by the runner, here we only check that the
+      # action asks for it, both for raw and for expanded values.
+      - name: Verify mask commands
+        env:
+          GITHUB_ENV: ${{ runner.temp }}/mask-env
+          INPUT_PATH: .github/test-dir
+          INPUT_FILENAMES: test-mask.env
+          INPUT_EXPAND: 'true'
+          INPUT_QUIET: 'true'
+          INPUT_MASK-VARIABLES: |
+            TEST_SECRET
+            TEST_SECRET_EXPANDED
+          INPUT_IF-FILE-NOT-FOUND: error
+        run: |
+          touch "$GITHUB_ENV"
+          node dist/index.js | tee "$RUNNER_TEMP/mask-output.txt"
+          for expected in 's3cr3t-value' 's3cr3t-value-expanded'; do
+            if ! grep -qxF "::add-mask::$expected" "$RUNNER_TEMP/mask-output.txt"; then
+              echo "Expected '::add-mask::$expected' in the action output"
+              exit 1
+            fi
+          done
+
   test-cycle:
     runs-on: ubuntu-latest
     steps:

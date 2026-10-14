@@ -57,6 +57,14 @@ const dotenv = __importStar(__nccwpck_require__(8230));
 const fs = __importStar(__nccwpck_require__(9896));
 const dotenvExpand = __importStar(__nccwpck_require__(7596));
 const path_1 = __importDefault(__nccwpck_require__(6928));
+function maskValues(names, variables) {
+    for (const name of names) {
+        const value = variables[name];
+        if (value) {
+            core.setSecret(value);
+        }
+    }
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const ifNoFilesFound = core.getInput('if-file-not-found');
@@ -64,6 +72,11 @@ function run() {
         const quiet = core.getBooleanInput('quiet');
         const filenames = core.getInput('filenames');
         const expand = core.getBooleanInput('expand');
+        const maskVariables = core
+            .getInput('mask-variables')
+            .split('\n')
+            .map(value => value.trim())
+            .filter(value => value.length > 0);
         const fullDirectory = path_1.default.resolve(inputPath);
         let mergedObject = {};
         for (const name of filenames.split('\n').map(value => value.trim())) {
@@ -91,6 +104,8 @@ function run() {
             const env = dotenv.parse(fs.readFileSync(fullPath));
             mergedObject = Object.assign(Object.assign({}, mergedObject), env);
         }
+        // Mask before any value is logged
+        maskValues(maskVariables, mergedObject);
         core.debug(`Merged object before expansion: ${JSON.stringify(mergedObject)}`);
         if (expand) {
             if (!quiet) {
@@ -107,6 +122,8 @@ function run() {
                 throw new Error('No parsed output from dotenv-expand');
             }
             mergedObject = dotenvExpandOutput.parsed;
+            // Expanded values can differ from the raw ones
+            maskValues(maskVariables, mergedObject);
         }
         core.debug(`Merged object after expansion: ${JSON.stringify(mergedObject)}`);
         if (!quiet) {
