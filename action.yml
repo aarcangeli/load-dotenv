@@ -41,7 +41,7 @@ inputs:
       Only the variables loaded by this action are masked.
     default: ''
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
 branding:
   icon: settings
