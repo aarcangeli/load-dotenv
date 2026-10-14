@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Set Node.js 16.x
-        uses: actions/setup-node@v4
+      - name: Set Node.js LTS
+        uses: actions/setup-node@v7
         with:
           node-version: lts/*
 
@@ -38,7 +38,7 @@ jobs:
           fi
 
       # If index.js was different than expected, upload the expected version as an artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         with:
           name: dist
@@ -47,7 +47,7 @@ jobs:
   test-simple:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -72,7 +72,7 @@ jobs:
   test-warning:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -81,7 +81,7 @@ jobs:
   test-error:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: test-failure
@@ -100,7 +100,7 @@ jobs:
   test-quiet:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -111,7 +111,7 @@ jobs:
   test-multiple-files:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -134,7 +134,7 @@ jobs:
   test-expand:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -173,7 +173,7 @@ jobs:
   test-multiple-files-expand:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -214,7 +214,7 @@ jobs:
   test-mask:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         with:
@@ -262,7 +262,7 @@ jobs:
   test-cycle:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./
         continue-on-error: true
