@@ -33,7 +33,7 @@
     "@eslint/js": "^9.39.0",
     "@folkforms/line-endings": "^0.0.12",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.19.2",
+    "@types/node": "^26.6.5",
     "@typescript-eslint/eslint-plugin": "^8.71.2",
     "@typescript-eslint/parser": "^8.71.2",
     "@vercel/ncc": "^0.45.0",
@@ -43,7 +43,7 @@
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^17.13.0",
-    "js-yaml": "^5.4.3",
+    "js-yaml": "^5.5.0",
     "prettier": "^3.9.10",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.2"
