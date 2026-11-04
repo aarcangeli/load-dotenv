@@ -66,7 +66,7 @@ jobs:
           if [[ "$TEST_UNEXPAND" != '$TEST_EXPORT bar' ]]; then
             echo TEST_UNEXPAND should not be expanded
             echo "Actual: $TEST_UNEXPAND"
-            #exit 1
+            exit 1
           fi
 
   test-warning:
@@ -258,6 +258,205 @@ jobs:
               exit 1
             fi
           done
+
+  test-quiet-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify the output with quiet=true
+        env:
+          GITHUB_ENV: ${{ runner.temp }}/quiet-env
+          INPUT_PATH: .github/test-dir
+          INPUT_FILENAMES: .env
+          INPUT_EXPAND: 'false'
+          INPUT_QUIET: 'true'
+          INPUT_MASK-VARIABLES: ''
+          INPUT_IF-FILE-NOT-FOUND: error
+        run: |
+          touch "$GITHUB_ENV"
+          node dist/index.js > "$RUNNER_TEMP/quiet-output.txt"
+          cat "$RUNNER_TEMP/quiet-output.txt"
+          if grep -qE '^(Loading |TEST_EXPORT = )' "$RUNNER_TEMP/quiet-output.txt"; then
+            echo 'The output must not contain the variables or the loaded files when quiet is true'
+            exit 1
+          fi
+          if ! grep -q '^TEST_EXPORT<<' "$GITHUB_ENV"; then
+            echo 'TEST_EXPORT must still be exported when quiet is true'
+            exit 1
+          fi
+
+      - name: Verify the output with quiet=false
+        env:
+          GITHUB_ENV: ${{ runner.temp }}/verbose-env
+          INPUT_PATH: .github/test-dir
+          INPUT_FILENAMES: .env
+          INPUT_EXPAND: 'false'
+          INPUT_QUIET: 'false'
+          INPUT_MASK-VARIABLES: ''
+          INPUT_IF-FILE-NOT-FOUND: error
+        run: |
+          touch "$GITHUB_ENV"
+          node dist/index.js > "$RUNNER_TEMP/verbose-output.txt"
+          cat "$RUNNER_TEMP/verbose-output.txt"
+          for expected in 'Loading ' 'TEST_EXPORT = foo'; do
+            if ! grep -qF "$expected" "$RUNNER_TEMP/verbose-output.txt"; then
+              echo "Expected '$expected' in the output"
+              exit 1
+            fi
+          done
+
+  test-file-not-found-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify the messages for each if-file-not-found value
+        env:
+          GITHUB_ENV: ${{ runner.temp }}/not-found-env
+          INPUT_PATH: .github/test-dir
+          INPUT_FILENAMES: missing.env
+          INPUT_EXPAND: 'false'
+          INPUT_QUIET: 'false'
+          INPUT_MASK-VARIABLES: ''
+        run: |
+          touch "$GITHUB_ENV"
+
+          env "INPUT_IF-FILE-NOT-FOUND=warn" node dist/index.js > "$RUNNER_TEMP/warn.txt"
+          cat "$RUNNER_TEMP/warn.txt"
+          grep -q '^::warning::missing.env file not found' "$RUNNER_TEMP/warn.txt" || { echo 'warn must emit a warning'; exit 1; }
+
+          env "INPUT_IF-FILE-NOT-FOUND=ignore" node dist/index.js > "$RUNNER_TEMP/ignore.txt"
+          cat "$RUNNER_TEMP/ignore.txt"
+          if grep -qE '^::(warning|error)::' "$RUNNER_TEMP/ignore.txt"; then
+            echo 'ignore must not emit warnings or errors'
+            exit 1
+          fi
+
+          if env "INPUT_IF-FILE-NOT-FOUND=error" node dist/index.js > "$RUNNER_TEMP/error.txt"; then
+            echo 'error must fail the action'
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/error.txt"
+          grep -q '^::error::missing.env file not found' "$RUNNER_TEMP/error.txt" || { echo 'error must emit an error'; exit 1; }
+
+  test-ignore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          filenames: missing.env
+          if-file-not-found: ignore
+
+  test-missing-file-among-others:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # With warn and ignore the missing file is skipped and the others are loaded
+      - uses: ./
+        with:
+          path: .github/test-dir
+          if-file-not-found: warn
+          filenames: |
+            missing.env
+            test-override.env
+
+      - name: Verify Export
+        run: |
+          if [[ "$TEST_EXPORT" != "foo_override" ]]; then
+            echo 'Expected $TEST_EXPORT set to "foo_override"'
+            echo "Actual: $TEST_EXPORT"
+            exit 1
+          fi
+
+  test-missing-file-error-exports-nothing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./
+        id: load
+        continue-on-error: true
+        with:
+          path: .github/test-dir
+          if-file-not-found: error
+          filenames: |
+            test-override.env
+            missing.env
+
+      - name: Verify Outcome
+        run: |
+          if [[ "${{ steps.load.outcome }}" != "failure" ]]; then
+            echo 'Expected failure'
+            exit 1
+          fi
+          # The action stops before exporting anything
+          if [[ -n "${TEST_EXPORT+x}" ]]; then
+            echo 'Expected $TEST_EXPORT to be unset'
+            echo "Actual: $TEST_EXPORT"
+            exit 1
+          fi
+
+  test-subdirectory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          filenames: sub/sub.env
+
+      - name: Verify Export
+        run: |
+          if [[ "$IN_SUB" != "sub" ]]; then
+            echo 'Expected $IN_SUB set to "sub"'
+            echo "Actual: $IN_SUB"
+            exit 1
+          fi
+
+  # Documents how the dotenv syntax is parsed
+  test-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./
+        with:
+          path: .github/test-dir
+          filenames: syntax.env
+
+      - name: Verify Export
+        run: |
+          fail=0
+          check() {
+            if [[ "${!1}" != "$2" ]]; then
+              echo "Expected \$$1 set to '$2'"
+              echo "Actual: '${!1}'"
+              fail=1
+            fi
+          }
+          check PLAIN 'value'
+          check SPACED 'spaced value'
+          check SINGLE 'single quoted # not a comment'
+          check DOUBLE 'double quoted # not a comment'
+          check INLINE 'before'
+          check WITH_EQUALS 'a=b=c'
+          check EXPORTED 'exported'
+          check MULTILINE $'line1\nline2'
+          check NEWLINE_ESCAPE $'a\nb'
+          check URL 'https://example.com/path?x=1&y=2'
+          check BACKTICK 'back tick'
+          # An empty value is exported as an empty variable
+          if [[ -z "${EMPTY+x}" || -n "$EMPTY" ]]; then
+            echo 'Expected $EMPTY set and empty'
+            fail=1
+          fi
+          exit $fail
 
   test-cycle:
     runs-on: ubuntu-latest
