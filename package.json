@@ -38,7 +38,7 @@
     "@typescript-eslint/parser": "^8.71.2",
     "@vercel/ncc": "^0.45.0",
     "dotenv": "^18.0.7",
-    "dotenv-expand": "^11.0.7",
+    "dotenv-expand": "^1000.0.0",
     "eslint": "^9.39.0",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.32.0",
